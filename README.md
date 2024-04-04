@@ -11,8 +11,8 @@ Supported platforms:
 To install `dcw` run this command in your terminal:
 
 ```sh
-curl https://github.com/navrocky/dcw/releases/download/1.0.0/dcw-Lo /usr/local/bin/dcw
-chmod +x /usr/local/bin/dcw
+sudo sh -c 'curl -L https://github.com/navrocky/dcw/releases/download/1.0.0/dcw -o /usr/local/bin/dcw
+chmod +x /usr/local/bin/dcw'
 ```
 
 ## Usage 
