@@ -42,28 +42,35 @@ void WorkspaceService::remove(const std::string& name)
 {
     auto currentWpName = stateRepo->getCurrentWorkspace();
     if (currentWpName == name)
-        down();
+        down(true);
     wpRepo->remove(name);
     cout << "✅ " << "Workspace \"" << tc::bold << name << tc::reset << "\" removed" << endl;
 }
 
-void WorkspaceService::down()
+void WorkspaceService::down(bool purge)
 {
     auto currentWpName = stateRepo->getCurrentWorkspace();
     if (!currentWpName.has_value())
         return;
     auto wp = getWorkspace(currentWpName.value());
-    processExecutor->exec(format("docker-compose -f {} down", wp.composeFile));
+    string additionalFlags;
+    if (purge)
+        additionalFlags += " -v";
+    processExecutor->exec(format("docker-compose -f {} down{}", wp.composeFile, additionalFlags));
     stateRepo->setCurrentWorkspace(std::nullopt);
     cout << "✅ " << "Workspace \"" << tc::bold << *currentWpName << tc::reset << "\" stopped" << endl;
+    if (purge)
+        cout << "✅ " << "Workspace \"" << tc::bold << *currentWpName << tc::reset << "\" data removed" << endl;
 }
 
-void WorkspaceService::up(const std::string& name)
+void WorkspaceService::up(const std::string& name, bool clean)
 {
     auto wp = getWorkspace(name);
     auto currentWpName = stateRepo->getCurrentWorkspace();
     if (currentWpName.has_value() && *currentWpName != name)
-        down();
+        down(false);
+    if (clean)
+        processExecutor->exec(format("docker-compose -f {} down -v", wp.composeFile));
     processExecutor->exec(format("docker-compose -f {} up -d", wp.composeFile));
     stateRepo->setCurrentWorkspace(name);
     cout << "✅ " << "Workspace \"" << tc::bold << name << tc::reset << "\" activated" << endl;

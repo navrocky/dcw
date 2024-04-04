@@ -1,6 +1,7 @@
 #include "add_command.h"
 
 #include <stdexcept>
+#include <filesystem>
 
 using namespace std;
 
@@ -30,6 +31,9 @@ bool AddCommand::process(const Args::CmdLine& cmdLine)
         throw runtime_error("Name is empty");
     if (composeFile.empty())
         throw runtime_error("Compose file is empty");
-    service->add(name, composeFile);
+
+    auto composeFilePath = std::filesystem::absolute(composeFile);
+
+    service->add(name, composeFilePath);
     return true;
 }

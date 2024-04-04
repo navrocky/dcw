@@ -15,8 +15,8 @@ public:
     void add(const std::string& name, const std::string& composeFile);
     void remove(const std::string& name);
     void stop();
-    void down();
-    void up(const std::string& name);
+    void down(bool purge);
+    void up(const std::string& name, bool clean);
 
 private:
     Workspace getWorkspace(const std::string& name) const;
