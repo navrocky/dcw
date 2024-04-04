@@ -13,11 +13,11 @@
 #include "commands/remove_command.h"
 #include "commands/up_command.h"
 
+static const char* APP_VERSION = "1.0.0";
+
 using namespace std;
 using namespace Args;
 namespace tc = termcolor;
-
-const char* DEFAULT_CONFIG_FILE = "~/.local/share/dcwm/config.yml";
 
 using Commands = vector<CommandPtr>;
 
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
         };
 
         CmdLine cmdLine(argc, argv, CmdLine::CommandIsRequired);
-        cmdLine.addHelp(true, argv[0], "Docker Compose Workspace manager");
+        cmdLine.addHelp(true, argv[0], format("Docker Compose Workspace manager (v{})", APP_VERSION));
         regCommands(commands, cmdLine);
         cmdLine.parse();
         processCommands(commands, cmdLine);
