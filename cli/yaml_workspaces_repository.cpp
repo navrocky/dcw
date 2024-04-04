@@ -27,12 +27,26 @@ void YamlWorkspacesRepository::add(const Workspace& w)
     file->save();
 }
 
-void YamlWorkspacesRepository::remove(const std::string& name) { }
+void YamlWorkspacesRepository::remove(const std::string& name)
+{
+    auto wp = findByName(name);
+    if (!wp.has_value())
+        throw runtime_error(format("Workspace \"{}\" not found", name));
+
+    auto& config = file->getConfig();
+    auto workspaces = config[WORKSPACES_KEY];
+    workspaces.remove(name);
+    file->save();
+}
 
 std::vector<Workspace> YamlWorkspacesRepository::findAll()
 {
     auto& config = file->getConfig();
     auto wp = config[WORKSPACES_KEY];
+
+    if (!wp.IsDefined())
+        return std::vector<Workspace>();
+
     if (!wp.IsMap())
         throw runtime_error("Workspaces is not a map");
 

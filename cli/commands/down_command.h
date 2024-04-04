@@ -1,15 +1,15 @@
 #pragma once
 
+#include "../workspace_service.h"
 #include "base_command.h"
-#include "workspaces_repository.h"
 
-class ListCommand : public BaseCommand {
+class DownCommand : public BaseCommand {
 public:
-    ListCommand(const WorkspacesRepositoryPtr& repo);
+    DownCommand(const WorkspaceServicePtr& service);
 
     void reg(Args::CmdLine& cmdLine) override;
     bool process(const Args::CmdLine& cmdLine) override;
 
 private:
-    WorkspacesRepositoryPtr repo;
+    WorkspaceServicePtr service;
 };

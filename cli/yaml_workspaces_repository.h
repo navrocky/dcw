@@ -10,6 +10,7 @@ public:
     void remove(const std::string& name) override;
     std::vector<Workspace> findAll() override;
     std::optional<Workspace> findByName(const std::string& name) override;
+
 private:
     YamlConfigPtr file;
 };

@@ -3,19 +3,19 @@
 #include <iostream>
 
 #include <args-parser/all.hpp>
-#include <boost/program_options.hpp>
 #include <termcolor/termcolor.hpp>
 
 #include "yaml_workspaces_repository.h"
 
-#include "add_command.h"
-#include "list_command.h"
-#include "switch_command.h"
+#include "commands/add_command.h"
+#include "commands/down_command.h"
+#include "commands/list_command.h"
+#include "commands/remove_command.h"
+#include "commands/up_command.h"
 
 using namespace std;
 using namespace Args;
 namespace tc = termcolor;
-namespace po = boost::program_options;
 
 const char* DEFAULT_CONFIG_FILE = "~/.local/share/dcwm/config.yml";
 
@@ -42,23 +42,23 @@ int main(int argc, char** argv)
     try {
         auto home = std::getenv("HOME");
 
-        auto yamlConfig = make_shared<YamlConfig>(format("{}/.local/share/dcw/config.yml", home));
+        auto yamlConfig = make_shared<YamlConfig>(format("{}/.config/dcw/config.yml", home));
+        auto yamlState = make_shared<YamlConfig>(format("{}/.local/share/dcw/state.yml", home));
+
         auto workspacesRepo = make_shared<YamlWorkspacesRepository>(yamlConfig);
+        auto stateRepo = make_shared<YamlStateRepository>(yamlConfig);
+        auto processExecutor = make_shared<ProcessExecutor>();
+        auto workspaceService = make_shared<WorkspaceService>(workspacesRepo, stateRepo, processExecutor);
         Commands commands = {
-            make_shared<AddCommand>(workspacesRepo, argv[0]),
-            make_shared<ListCommand>(workspacesRepo),
-            make_shared<SwitchCommand>(workspacesRepo),
+            make_shared<AddCommand>(workspaceService),
+            make_shared<RemoveCommand>(workspaceService),
+            make_shared<ListCommand>(workspaceService),
+            make_shared<UpCommand>(workspaceService),
+            make_shared<DownCommand>(workspaceService),
         };
 
         CmdLine cmdLine(argc, argv, CmdLine::CommandIsRequired);
-        cmdLine
-            // .addCommand("remove")
-            // .end()
-            // .addCommand("stop")
-            // .end()
-            // .addCommand("down")
-            // .end()
-            .addHelp(true, argv[0], "Docker Compose Workspace Manager");
+        cmdLine.addHelp(true, argv[0], "Docker Compose Workspace manager");
         regCommands(commands, cmdLine);
         cmdLine.parse();
         processCommands(commands, cmdLine);

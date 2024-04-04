@@ -1,7 +1,7 @@
 [requires]
 args-parser/6.3.3
 termcolor/2.1.0
-boost/1.84.0
+#boost/1.84.0
 yaml-cpp/0.8.0
 
 [generators]

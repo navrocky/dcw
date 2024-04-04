@@ -2,7 +2,6 @@ set(TARGET dcw)
 
 find_package(args-parser REQUIRED)
 find_package(termcolor REQUIRED)
-find_package(Boost REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 add_link_options(-static -static-libgcc -static-libstdc++)
@@ -13,25 +12,37 @@ endif()
 
 set(SOURCES
     main.cpp
+    yaml_config.h
+    yaml_config.cpp
     workspaces_repository.h
-    workspaces_repository.cpp
-    add_command.h
-    add_command.cpp
-    base_command.h
-    base_command.cpp
+    workspace_service.h
+    workspace_service.cpp
+    state_repository.h
+    state_repository.cpp
+    process_executor.h
+    process_executor.cpp
+
     yaml_workspaces_repository.h
     yaml_workspaces_repository.cpp
+    commands/add_command.h
+    commands/add_command.cpp
+    commands/remove_command.h
+    commands/remove_command.cpp
+    commands/base_command.h
+    commands/base_command.cpp
+    commands/list_command.h
+    commands/list_command.cpp
+    commands/up_command.h
+    commands/up_command.cpp
+    commands/down_command.h
+    commands/down_command.cpp
 )
 
-add_executable(${TARGET} ${SOURCES}
-    yaml_config.h yaml_config.cpp
-    list_command.h list_command.cpp
-    switch_command.h switch_command.cpp)
+add_executable(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET}
     args-parser::args-parser
     termcolor::termcolor
-    boost::boost
     yaml-cpp::yaml-cpp
 )
 

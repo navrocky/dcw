@@ -1,0 +1,22 @@
+FROM navrocky/buildroot-uclibc-toolchain:i686-2023.11.1
+
+RUN set -x && \
+    apt-get update && \
+    apt-get -y install cmake make python3-pip && \
+    pip install conan --break-system-packages
+
+RUN conan profile detect --force && sed -i 's/x86_64/x86/g' ~/.conan2/profiles/default
+
+COPY conanfile.txt /sources/
+
+RUN set -x && \
+    mkdir -p /build && \
+    cd /build && \
+    conan install /sources --output-folder=. --build=missing
+
+COPY . /sources/
+
+RUN set -x && \
+    cd /build && \
+    cmake /sources -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build .

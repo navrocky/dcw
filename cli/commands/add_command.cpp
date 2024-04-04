@@ -1,28 +1,26 @@
 #include "add_command.h"
 
-#include <format>
 #include <stdexcept>
 
 using namespace std;
 
-AddCommand::AddCommand(const WorkspacesRepositoryPtr& repo, const string& executableFile)
-    : executableFile(executableFile)
-    , repo(repo)
+AddCommand::AddCommand(const WorkspaceServicePtr& service)
+    : service(service)
 {
 }
 
 void AddCommand::reg(Args::CmdLine& cmdLine)
 {
     cmdLine
-        .addCommand("add", Args::ValueOptions::ManyValues, false,
-            std::format("add named docker-compose as workspace. Example: {0} add my ~/projects/my/docker-compose.yml",
-                executableFile))
+        .addCommand("add", Args::ValueOptions::ManyValues, false, "Add named docker compose file as workspace",
+            string(), string(), "name> <compose file")
         .end();
 }
 
 bool AddCommand::process(const Args::CmdLine& cmdLine)
 {
-    if (!cmdLine.isDefined("add")) return false;
+    if (!cmdLine.isDefined("add"))
+        return false;
     auto vals = cmdLine.values("add");
     if (vals.size() != 2)
         throw runtime_error("Expected two arguments for 'add' command");
@@ -32,7 +30,6 @@ bool AddCommand::process(const Args::CmdLine& cmdLine)
         throw runtime_error("Name is empty");
     if (composeFile.empty())
         throw runtime_error("Compose file is empty");
-
-    repo->add({ .name = name, .composeFile = composeFile });
+    service->add(name, composeFile);
     return true;
 }
