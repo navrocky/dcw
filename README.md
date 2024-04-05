@@ -8,7 +8,7 @@ Supported platforms:
 
 * Linux x86, x86_64
 
-To install `dcw` run this command in your terminal:
+To install `dcw` system wide and bash completion run this command in your terminal:
 
 ```sh
 sudo sh -c 'curl -sSL https://github.com/navrocky/dcw/raw/master/install.sh | bash'
