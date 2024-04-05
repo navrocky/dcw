@@ -8,10 +8,10 @@ using namespace std;
 namespace tc = termcolor;
 
 WorkspaceService::WorkspaceService(
-    const WorkspacesRepositoryPtr& repo, const StateRepositoryPtr& stateRepo, const ProcessExecutorPtr& processExecutor)
+    const WorkspacesRepositoryPtr& repo, const StateRepositoryPtr& stateRepo, const ComposeExecutorPtr& composeExecutor)
     : wpRepo(repo)
     , stateRepo(stateRepo)
-    , processExecutor(processExecutor)
+    , composeExecutor(composeExecutor)
 {
 }
 
@@ -53,10 +53,7 @@ void WorkspaceService::down(bool purge)
     if (!currentWpName.has_value())
         return;
     auto wp = getWorkspace(currentWpName.value());
-    string additionalFlags;
-    if (purge)
-        additionalFlags += " -v";
-    processExecutor->exec(format("docker-compose -f {} down{}", wp.composeFile, additionalFlags));
+    composeExecutor->down(wp.composeFile, purge);
     stateRepo->setCurrentWorkspace(std::nullopt);
     cout << "✅ " << "Workspace \"" << tc::bold << *currentWpName << tc::reset << "\" stopped" << endl;
     if (purge)
@@ -70,8 +67,16 @@ void WorkspaceService::up(const std::string& name, bool clean)
     if (currentWpName.has_value() && *currentWpName != name)
         down(false);
     if (clean)
-        processExecutor->exec(format("docker-compose -f {} down -v", wp.composeFile));
-    processExecutor->exec(format("docker-compose -f {} up -d", wp.composeFile));
+        composeExecutor->down(wp.composeFile, true);
+    try {
+        composeExecutor->up(wp.composeFile, true);
+    } catch (...) {
+        cerr << "❌ " << "Cannot start workspace \"" << tc::bold << name << tc::reset
+             << "\". Shutting down partially started containers." << endl;
+        composeExecutor->down(wp.composeFile, false);
+        throw;
+    }
+
     stateRepo->setCurrentWorkspace(name);
     cout << "✅ " << "Workspace \"" << tc::bold << name << tc::reset << "\" activated" << endl;
 }

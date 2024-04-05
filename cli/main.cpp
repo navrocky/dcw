@@ -13,7 +13,7 @@
 #include "commands/remove_command.h"
 #include "commands/up_command.h"
 
-static const char* APP_VERSION = "1.0.0";
+static const char* APP_VERSION = "1.1.0";
 
 using namespace std;
 using namespace Args;
@@ -48,7 +48,8 @@ int main(int argc, char** argv)
         auto workspacesRepo = make_shared<YamlWorkspacesRepository>(yamlConfig);
         auto stateRepo = make_shared<YamlStateRepository>(yamlConfig);
         auto processExecutor = make_shared<ProcessExecutor>();
-        auto workspaceService = make_shared<WorkspaceService>(workspacesRepo, stateRepo, processExecutor);
+        auto composeExecutor = make_shared<ComposeExecutorImpl>(processExecutor);
+        auto workspaceService = make_shared<WorkspaceService>(workspacesRepo, stateRepo, composeExecutor);
         Commands commands = {
             make_shared<AddCommand>(workspaceService),
             make_shared<RemoveCommand>(workspaceService),

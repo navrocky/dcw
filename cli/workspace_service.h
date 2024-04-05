@@ -2,14 +2,14 @@
 
 #include <memory>
 
-#include "process_executor.h"
+#include "compose_executor.h"
 #include "state_repository.h"
 #include "workspaces_repository.h"
 
 class WorkspaceService {
 public:
     WorkspaceService(const WorkspacesRepositoryPtr& repo, const StateRepositoryPtr& stateRepo,
-        const ProcessExecutorPtr& processExecutor);
+        const ComposeExecutorPtr& composeExecutor);
 
     void list(bool namesOnly);
     void add(const std::string& name, const std::string& composeFile);
@@ -23,7 +23,7 @@ private:
 
     WorkspacesRepositoryPtr wpRepo;
     StateRepositoryPtr stateRepo;
-    ProcessExecutorPtr processExecutor;
+    ComposeExecutorPtr composeExecutor;
 };
 
 using WorkspaceServicePtr = std::shared_ptr<WorkspaceService>;

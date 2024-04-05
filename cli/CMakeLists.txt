@@ -21,6 +21,8 @@ set(SOURCES
     state_repository.cpp
     process_executor.h
     process_executor.cpp
+    compose_executor.h
+    compose_executor.cpp
 
     yaml_workspaces_repository.h
     yaml_workspaces_repository.cpp
