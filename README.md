@@ -4,7 +4,8 @@ It helps to manage developer test environments based on docker-compose files.
 
 ## Installation
 
-Supported platforms:
+The released binaries are statically compiled, so they can run in almost all linux distributions, tested in Ubuntu 4 (2006). 
+Supported platforms is:
 
 * Linux x86, x86_64
 
