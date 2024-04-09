@@ -12,8 +12,7 @@
 #include "commands/list_command.h"
 #include "commands/remove_command.h"
 #include "commands/up_command.h"
-
-static const char* APP_VERSION = "1.1.0";
+#include "config.h"
 
 using namespace std;
 using namespace Args;
