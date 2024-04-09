@@ -4,10 +4,7 @@
 #include <format>
 #include <stdexcept>
 
-int ProcessExecutor::exec(const std::string &cmdLine)
-{
-    return std::system(cmdLine.c_str());
-}
+int ProcessExecutor::exec(const std::string& cmdLine) { return std::system(cmdLine.c_str()); }
 
 void ProcessExecutor::execOrThrow(const std::string& cmdLine)
 {

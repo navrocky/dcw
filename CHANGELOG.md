@@ -1,3 +1,7 @@
+# 1.1.1 (2024.04.09)
+
+* Fix work dir when running `docker compose`
+
 # 1.1.0 (2024.04.05)
 
 * Add bash completion
