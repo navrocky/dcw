@@ -1,3 +1,7 @@
+# 1.1.2 (2024.04.24)
+
+* Fix location of state yaml file to `~/.local/share/dcw/state.yml`
+
 # 1.1.1 (2024.04.09)
 
 * Fix work dir when running `docker compose`
