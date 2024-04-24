@@ -45,7 +45,7 @@ int main(int argc, char** argv)
         auto yamlState = make_shared<YamlConfig>(format("{}/.local/share/dcw/state.yml", home));
 
         auto workspacesRepo = make_shared<YamlWorkspacesRepository>(yamlConfig);
-        auto stateRepo = make_shared<YamlStateRepository>(yamlConfig);
+        auto stateRepo = make_shared<YamlStateRepository>(yamlState);
         auto processExecutor = make_shared<ProcessExecutor>();
         auto composeExecutor = make_shared<ComposeExecutorImpl>(processExecutor);
         auto workspaceService = make_shared<WorkspaceService>(workspacesRepo, stateRepo, composeExecutor);
