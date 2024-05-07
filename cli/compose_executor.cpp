@@ -14,18 +14,18 @@ ComposeExecutorImpl::ComposeExecutorImpl(ProcessExecutorPtr processExecutor)
         composeCommand = "docker-compose";
 }
 
-void ComposeExecutorImpl::up(const std::string& file, bool detach)
+void ComposeExecutorImpl::up(const std::string& file, const string& projectName, bool detach)
 {
     auto dir = filesystem::path(file).parent_path();
-    auto command = format("cd \"{}\" && {} -f \"{}\" up", dir.string(), composeCommand, file);
+    auto command = format("cd \"{}\" && {} -p \"{}\" -f \"{}\" up", dir.string(), composeCommand, projectName, file);
     if (detach)
         command += " -d";
     processExecutor->execOrThrow(command);
 }
 
-void ComposeExecutorImpl::down(const std::string& file, bool withVolumes)
+void ComposeExecutorImpl::down(const std::string& file, const string& projectName, bool withVolumes)
 {
-    auto command = format("{} -f {} down", composeCommand, file);
+    auto command = format("{} -p \"{}\" -f \"{}\" down", composeCommand, projectName, file);
     if (withVolumes)
         command += " -v";
     processExecutor->execOrThrow(command);

@@ -53,7 +53,7 @@ void WorkspaceService::down(bool purge)
     if (!currentWpName.has_value())
         return;
     auto wp = getWorkspace(currentWpName.value());
-    composeExecutor->down(wp.composeFile, purge);
+    composeExecutor->down(wp.composeFile, wp.name, purge);
     stateRepo->setCurrentWorkspace(std::nullopt);
     cout << "✅ " << "Workspace \"" << tc::bold << *currentWpName << tc::reset << "\" stopped" << endl;
     if (purge)
@@ -67,13 +67,13 @@ void WorkspaceService::up(const std::string& name, bool clean)
     if (currentWpName.has_value() && *currentWpName != name)
         down(false);
     if (clean)
-        composeExecutor->down(wp.composeFile, true);
+        composeExecutor->down(wp.composeFile, wp.name, true);
     try {
-        composeExecutor->up(wp.composeFile, true);
+        composeExecutor->up(wp.composeFile, wp.name, true);
     } catch (...) {
         cerr << "❌ " << "Cannot start workspace \"" << tc::bold << name << tc::reset
              << "\". Shutting down partially started containers." << endl;
-        composeExecutor->down(wp.composeFile, false);
+        composeExecutor->down(wp.composeFile, wp.name, false);
         throw;
     }
 
