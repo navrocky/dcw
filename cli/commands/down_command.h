@@ -7,9 +7,10 @@ class DownCommand : public BaseCommand {
 public:
     DownCommand(const WorkspaceServicePtr& service);
 
-    void reg(Args::CmdLine& cmdLine) override;
-    bool process(const Args::CmdLine& cmdLine) override;
+    void reg(CLI::App& app) override;
 
 private:
+    void process();
     WorkspaceServicePtr service;
+    bool purge;
 };

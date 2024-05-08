@@ -2,21 +2,16 @@
 
 ListCommand::ListCommand(const WorkspaceServicePtr& service)
     : service(service)
+    , namesOnly(false)
 {
 }
 
-void ListCommand::reg(Args::CmdLine& cmdLine)
+void ListCommand::reg(CLI::App& app)
 {
-    cmdLine.addCommand("list", Args::ValueOptions::NoValue, false, "List registered workspaces")
-        .addArgWithFlagAndName('n', "names", false, false, "Show names only")
-        .end();
+    auto cmd = app.add_subcommand("list", "List registered workspaces")
+                   ->alias("l")
+                   ->callback(std::bind(&ListCommand::process, this));
+    cmd->add_flag("-n, --names", namesOnly, "Show names only");
 }
 
-bool ListCommand::process(const Args::CmdLine& cmdLine)
-{
-    if (!cmdLine.isDefined("list"))
-        return false;
-    bool namesOnly = cmdLine.isDefined("-n");
-    service->list(namesOnly);
-    return true;
-}
+void ListCommand::process() { service->list(namesOnly); }

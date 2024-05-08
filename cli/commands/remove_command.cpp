@@ -1,26 +1,15 @@
 #include "remove_command.h"
 
-#include <stdexcept>
-
-using namespace std;
-
 RemoveCommand::RemoveCommand(const WorkspaceServicePtr& service)
     : service(service)
 {
 }
 
-void RemoveCommand::reg(Args::CmdLine& cmdLine)
+void RemoveCommand::reg(CLI::App& app)
 {
-    cmdLine.addCommand("rm", Args::ValueOptions::OneValue, false, "Remove workspace by name", "", "", "name").end();
+    auto cmd
+        = app.add_subcommand("rm", "Remove workspace")->alias("r")->callback(std::bind(&RemoveCommand::process, this));
+    cmd->add_option("name", name, "Name of the workspace");
 }
 
-bool RemoveCommand::process(const Args::CmdLine& cmdLine)
-{
-    if (!cmdLine.isDefined("rm"))
-        return false;
-    auto name = cmdLine.value("rm");
-    if (name.empty())
-        throw runtime_error("Name is empty");
-    service->remove(name);
-    return true;
-}
+void RemoveCommand::process() { service->remove(name); }

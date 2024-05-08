@@ -2,25 +2,17 @@
 
 UpCommand::UpCommand(const WorkspaceServicePtr& service)
     : service(service)
+    , clean(false)
 {
 }
 
-void UpCommand::reg(Args::CmdLine& cmdLine)
+void UpCommand::reg(CLI::App& app)
 {
-    cmdLine
-        .addCommand(
-            "up", Args::ValueOptions::OneValue, false, "Switch to the workspace with a name", "", "default", "name")
-        .addArgWithFlagAndName('c', "clean", false, false, "Purge workspace data (docker volumes) before start")
-        .end();
+    auto cmd = app.add_subcommand("up", "Switch to the workspace")
+                   ->alias("u")
+                   ->callback(std::bind(&UpCommand::process, this));
+    cmd->add_option("name", name, "Workspace name");
+    cmd->add_flag("-c, --clean", clean, "Purge workspace data (docker volumes) before start");
 }
 
-bool UpCommand::process(const Args::CmdLine& cmdLine)
-{
-    if (!cmdLine.isDefined("up"))
-        return false;
-    auto vals = cmdLine.values("up");
-    auto name = vals[0];
-    bool clean = cmdLine.isDefined("-c");
-    service->up(name, clean);
-    return true;
-}
+void UpCommand::process() { service->up(name, clean); }

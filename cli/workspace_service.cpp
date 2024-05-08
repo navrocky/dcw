@@ -1,5 +1,6 @@
 #include "workspace_service.h"
 
+#include <filesystem>
 #include <format>
 #include <iostream>
 #include <termcolor/termcolor.hpp>
@@ -50,7 +51,7 @@ void WorkspaceService::remove(const std::string& name)
 void WorkspaceService::down(bool purge)
 {
     auto currentWpName = stateRepo->getCurrentWorkspace();
-    if (!currentWpName.has_value())
+    if (!currentWpName.has_value() || currentWpName->empty())
         return;
     auto wp = getWorkspace(currentWpName.value());
     composeExecutor->down(wp.composeFile, wp.name, purge);
@@ -62,23 +63,40 @@ void WorkspaceService::down(bool purge)
 
 void WorkspaceService::up(const std::string& name, bool clean)
 {
-    auto wp = getWorkspace(name);
     auto currentWpName = stateRepo->getCurrentWorkspace();
-    if (currentWpName.has_value() && *currentWpName != name)
+    optional<Workspace> wp;
+
+    if (!name.empty()) {
+        wp = getWorkspace(name);
+    }
+
+    if (!wp.has_value()) {
+        auto curPath = filesystem::current_path();
+        wp = findWorkspaceByPath(curPath);
+    }
+
+    if (!wp.has_value() && currentWpName.has_value()) {
+        wp = getWorkspace(*currentWpName);
+    }
+
+    if (!wp.has_value())
+        throw runtime_error("Workspace name required");
+
+    if (currentWpName.has_value() && *currentWpName != wp->name)
         down(false);
     if (clean)
-        composeExecutor->down(wp.composeFile, wp.name, true);
+        composeExecutor->down(wp->composeFile, wp->name, true);
     try {
-        composeExecutor->up(wp.composeFile, wp.name, true);
+        composeExecutor->up(wp->composeFile, wp->name, true);
     } catch (...) {
-        cerr << "❌ " << "Cannot start workspace \"" << tc::bold << name << tc::reset
+        cerr << "❌ " << "Cannot start workspace \"" << tc::bold << wp->name << tc::reset
              << "\". Shutting down partially started containers." << endl;
-        composeExecutor->down(wp.composeFile, wp.name, false);
+        composeExecutor->down(wp->composeFile, wp->name, false);
         throw;
     }
 
-    stateRepo->setCurrentWorkspace(name);
-    cout << "✅ " << "Workspace \"" << tc::bold << name << tc::reset << "\" activated" << endl;
+    stateRepo->setCurrentWorkspace(wp->name);
+    cout << "✅ " << "Workspace \"" << tc::bold << wp->name << tc::reset << "\" activated" << endl;
 }
 
 Workspace WorkspaceService::getWorkspace(const std::string& name) const
@@ -87,4 +105,14 @@ Workspace WorkspaceService::getWorkspace(const std::string& name) const
     if (!wp.has_value())
         throw runtime_error(format("Workspace \"{}\" not found", name));
     return *wp;
+}
+
+std::optional<Workspace> WorkspaceService::findWorkspaceByPath(const std::string& path) const
+{
+    vector<Workspace> workspaces;
+    for (const auto& wp : wpRepo->findAll()) {
+        if (wp.composeFile.starts_with(path))
+            workspaces.push_back(wp);
+    }
+    return workspaces.size() == 1 ? optional(workspaces[0]) : nullopt;
 }

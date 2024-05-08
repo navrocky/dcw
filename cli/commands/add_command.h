@@ -7,9 +7,12 @@ class AddCommand : public BaseCommand {
 public:
     AddCommand(const WorkspaceServicePtr& service);
 
-    void reg(Args::CmdLine& cmdLine) override;
-    bool process(const Args::CmdLine& cmdLine) override;
+    void reg(CLI::App& app) override;
 
 private:
+    void process();
+
     WorkspaceServicePtr service;
+    std::string name;
+    std::string file;
 };
