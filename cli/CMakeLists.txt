@@ -1,8 +1,8 @@
 set(TARGET dcw)
 
-find_package(args-parser REQUIRED)
 find_package(termcolor REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(CLI11 REQUIRED)
 
 add_link_options(-static -static-libgcc -static-libstdc++)
 
@@ -35,7 +35,6 @@ set(SOURCES
     commands/remove_command.h
     commands/remove_command.cpp
     commands/base_command.h
-    commands/base_command.cpp
     commands/list_command.h
     commands/list_command.cpp
     commands/up_command.h
@@ -47,9 +46,9 @@ set(SOURCES
 add_executable(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET}
-    args-parser::args-parser
     termcolor::termcolor
     yaml-cpp::yaml-cpp
+    CLI11::CLI11
 )
 
 include(GNUInstallDirs)

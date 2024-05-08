@@ -20,6 +20,7 @@ public:
 
 private:
     Workspace getWorkspace(const std::string& name) const;
+    std::optional<Workspace> findWorkspaceByPath(const std::string& path) const;
 
     WorkspacesRepositoryPtr wpRepo;
     StateRepositoryPtr stateRepo;

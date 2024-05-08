@@ -1,7 +1,6 @@
 #include "add_command.h"
 
 #include <filesystem>
-#include <stdexcept>
 
 using namespace std;
 
@@ -10,30 +9,17 @@ AddCommand::AddCommand(const WorkspaceServicePtr& service)
 {
 }
 
-void AddCommand::reg(Args::CmdLine& cmdLine)
+void AddCommand::reg(CLI::App& app)
 {
-    cmdLine
-        .addCommand("add", Args::ValueOptions::ManyValues, false, "Add named docker compose file as workspace",
-            string(), string(), "name> <compose file")
-        .end();
+    auto cmd = app.add_subcommand("add", "Add named docker compose file as workspace")
+                   ->alias("a")
+                   ->callback(std::bind(&AddCommand::process, this));
+    cmd->add_option("name", name, "Workspace name")->required();
+    cmd->add_option("file", file, "Docker compose file")->required();
 }
 
-bool AddCommand::process(const Args::CmdLine& cmdLine)
+void AddCommand::process()
 {
-    if (!cmdLine.isDefined("add"))
-        return false;
-    auto vals = cmdLine.values("add");
-    if (vals.size() != 2)
-        throw runtime_error("Expected two arguments for 'add' command");
-    auto name = vals[0];
-    auto composeFile = vals[1];
-    if (name.empty())
-        throw runtime_error("Name is empty");
-    if (composeFile.empty())
-        throw runtime_error("Compose file is empty");
-
-    auto composeFilePath = std::filesystem::absolute(composeFile);
-
+    auto composeFilePath = std::filesystem::absolute(file);
     service->add(name, composeFilePath);
-    return true;
 }

@@ -18,16 +18,17 @@ sudo sh -c 'curl -sSL https://github.com/navrocky/dcw/raw/master/install.sh | ba
 ## Usage 
 
 ```
-USAGE: dcw <command> <options> 
+Usage: dcw [OPTIONS] SUBCOMMAND
 
-  add <name> <compose file> Add named docker compose file as workspace 
-  down                      Down current workspace 
-  list                      List registered workspaces 
-  rm <name>                 Remove workspace by name 
-  up <name>                 Switch to the workspace with a name 
+Options:
+  -h,--help                   Print this help message and exit
 
-OPTIONAL:
- -h, --help <arg> Print this help.
+Subcommands:
+  add, a                      Add named docker compose file as workspace
+  rm, r                       Remove workspace
+  list, l                     List registered workspaces
+  up, u                       Switch to the workspace
+  down, d                     Down current workspace
 ```
 
 ## Examples

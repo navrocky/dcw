@@ -2,7 +2,7 @@
 #include <format>
 #include <iostream>
 
-#include <args-parser/all.hpp>
+#include <CLI/CLI.hpp>
 #include <termcolor/termcolor.hpp>
 
 #include "yaml_workspaces_repository.h"
@@ -15,26 +15,9 @@
 #include "config.h"
 
 using namespace std;
-using namespace Args;
 namespace tc = termcolor;
 
 using Commands = vector<CommandPtr>;
-
-void regCommands(const Commands& commands, CmdLine& cmdLine)
-{
-    for (const auto& cmd : commands) {
-        cmd->reg(cmdLine);
-    }
-}
-
-void processCommands(const Commands& commands, const CmdLine& cmdLine)
-{
-    for (const auto& cmd : commands) {
-        if (cmd->process(cmdLine))
-            return;
-    }
-    throw runtime_error("No command processed");
-}
 
 int main(int argc, char** argv)
 {
@@ -49,6 +32,13 @@ int main(int argc, char** argv)
         auto processExecutor = make_shared<ProcessExecutor>();
         auto composeExecutor = make_shared<ComposeExecutorImpl>(processExecutor);
         auto workspaceService = make_shared<WorkspaceService>(workspacesRepo, stateRepo, composeExecutor);
+
+        if (argc == 1) {
+            // if no args provided then print workspaces list
+            workspaceService->list(false);
+            return 0;
+        }
+
         Commands commands = {
             make_shared<AddCommand>(workspaceService),
             make_shared<RemoveCommand>(workspaceService),
@@ -57,17 +47,14 @@ int main(int argc, char** argv)
             make_shared<DownCommand>(workspaceService),
         };
 
-        CmdLine cmdLine(argc, argv, CmdLine::CommandIsRequired);
-        cmdLine.addHelp(true, argv[0], format("Docker Compose Workspace manager (v{})", APP_VERSION));
-        regCommands(commands, cmdLine);
-        cmdLine.parse();
-        processCommands(commands, cmdLine);
+        CLI::App app { format("Docker Compose Workspace manager (v{})", APP_VERSION) };
+        for (const auto& cmd : commands) {
+            cmd->reg(app);
+        }
+
+        CLI11_PARSE(app, argc, argv);
+
         return 0;
-    } catch (const HelpHasBeenPrintedException& e) {
-        return 0;
-    } catch (const BaseException& e) {
-        cerr << tc::red << "Call error: " << e.desc() << tc::reset << endl;
-        return 1;
     } catch (const exception& e) {
         cerr << tc::red << "Error: " << e.what() << tc::reset << endl;
         return 1;

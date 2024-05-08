@@ -2,21 +2,16 @@
 
 DownCommand::DownCommand(const WorkspaceServicePtr& service)
     : service(service)
+    , purge(false)
 {
 }
 
-void DownCommand::reg(Args::CmdLine& cmdLine)
+void DownCommand::reg(CLI::App& app)
 {
-    cmdLine.addCommand("down", Args::ValueOptions::NoValue, false, "Down current workspace")
-        .addArgWithFlagAndName('p', "purge", false, false, "Purge workspace data (docker volumes)")
-        .end();
+    auto cmd = app.add_subcommand("down", "Down current workspace")
+                   ->alias("d")
+                   ->callback(std::bind(&DownCommand::process, this));
+    cmd->add_flag("-p, --purge", purge, "Purge workspace data (docker volumes)");
 }
 
-bool DownCommand::process(const Args::CmdLine& cmdLine)
-{
-    if (!cmdLine.isDefined("down"))
-        return false;
-    bool purge = cmdLine.isDefined("-p");
-    service->down(purge);
-    return true;
-}
+void DownCommand::process() { service->down(purge); }
