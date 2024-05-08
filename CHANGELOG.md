@@ -4,6 +4,7 @@
 * Suggest workspace name in `up` command if it not provided. Name suggested if current directory matches workspace or 
   try to up the latest active workspace.
 * Added shortcuts for all commands
+* `dcw` without args shows a list of all workspaces
 
 # 1.1.2 (2024.04.24)
 

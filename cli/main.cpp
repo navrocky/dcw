@@ -32,6 +32,13 @@ int main(int argc, char** argv)
         auto processExecutor = make_shared<ProcessExecutor>();
         auto composeExecutor = make_shared<ComposeExecutorImpl>(processExecutor);
         auto workspaceService = make_shared<WorkspaceService>(workspacesRepo, stateRepo, composeExecutor);
+
+        if (argc == 1) {
+            // if no args provided then print workspaces list
+            workspaceService->list(false);
+            return 0;
+        }
+
         Commands commands = {
             make_shared<AddCommand>(workspaceService),
             make_shared<RemoveCommand>(workspaceService),
@@ -41,13 +48,12 @@ int main(int argc, char** argv)
         };
 
         CLI::App app { format("Docker Compose Workspace manager (v{})", APP_VERSION) };
-        app.require_subcommand();
-
         for (const auto& cmd : commands) {
             cmd->reg(app);
         }
 
         CLI11_PARSE(app, argc, argv);
+
         return 0;
     } catch (const exception& e) {
         cerr << tc::red << "Error: " << e.what() << tc::reset << endl;
