@@ -17,7 +17,7 @@ ComposeExecutorImpl::ComposeExecutorImpl(ProcessExecutorPtr processExecutor)
 void ComposeExecutorImpl::up(const std::string& file, const string& projectName, bool detach)
 {
     auto dir = filesystem::path(file).parent_path();
-    auto command = format("cd \"{}\" && {} -p \"{}\" -f \"{}\" up", dir.string(), composeCommand, projectName, file);
+    auto command = format("cd \"{}\" && {} -p \"{}\" -f \"{}\" up --build", dir.string(), composeCommand, projectName, file);
     if (detach)
         command += " -d";
     processExecutor->execOrThrow(command);

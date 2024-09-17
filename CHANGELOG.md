@@ -1,3 +1,7 @@
+# 1.2.1 (2024.09.17)
+
+* Add `--build` parameter to compose up command
+
 # 1.2.0 (2024.05.08)
 
 * Switch to new command line parser [CLI11](https://github.com/CLIUtils/CLI11)
