@@ -42,8 +42,15 @@ void WorkspaceService::add(const string& name, const string& composeFile)
 void WorkspaceService::remove(const std::string& name)
 {
     auto currentWpName = stateRepo->getCurrentWorkspace();
-    if (currentWpName == name)
-        down(true);
+    if (currentWpName == name) {
+        try {
+            down(true);
+        } catch (const std::exception& e) {
+            cerr << "❌ " << "Cannot down current workspace \"" << tc::bold << name << tc::reset
+                 << "\" due to error, skipping. Error is: " << tc::bright_red << e.what() << tc::reset << endl;
+        }
+        stateRepo->setCurrentWorkspace("");
+    }
     wpRepo->remove(name);
     cout << "✅ " << "Workspace \"" << tc::bold << name << tc::reset << "\" removed" << endl;
 }

@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
         return 0;
     } catch (const exception& e) {
-        cerr << tc::red << "Error: " << e.what() << tc::reset << endl;
+        cerr << tc::red << "❌ Error: " << e.what() << tc::reset << endl;
         return 1;
     }
 }
