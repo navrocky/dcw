@@ -1,3 +1,7 @@
+# 1.2.2 (2024.10.31)
+
+* Fix removing of current workspace if compose file does not exists
+
 # 1.2.1 (2024.09.17)
 
 * Add `--build` parameter to compose up command
