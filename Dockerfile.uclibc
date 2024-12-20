@@ -2,8 +2,15 @@ FROM navrocky/buildroot-uclibc-toolchain:i686-2023.11.1
 
 RUN set -x && \
     apt-get update && \
-    apt-get -y install cmake make python3-pip ninja-build && \
+    apt-get -y --no-install-recommends install cmake make python3-pip ninja-build curl libmpc3 && \
     pip install conan --break-system-packages
+
+ENV UPX_VER=4.2.4
+RUN set -x && \
+    curl -LO https://github.com/upx/upx/releases/download/v${UPX_VER}/upx-${UPX_VER}-amd64_linux.tar.xz && \
+    xzdec upx-${UPX_VER}-amd64_linux.tar.xz | tar xf - && \
+    install upx-${UPX_VER}-amd64_linux/upx /usr/bin/upx && \
+    rm -rf upx-${UPX_VER}-amd64_linux upx-${UPX_VER}-amd64_linux.tar.xz
 
 RUN conan profile detect --force && sed -i 's/x86_64/x86/g' ~/.conan2/profiles/default
 
@@ -19,4 +26,5 @@ COPY . /sources/
 RUN set -x && \
     cd /build && \
     cmake /sources -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja && \
-    cmake --build .
+    cmake --build . && \
+    upx -9 cli/dcw

@@ -1,3 +1,7 @@
+# 1.2.3 (2024.12.20)
+
+* Pack binary with UPX
+
 # 1.2.2 (2024.10.31)
 
 * Fix removing of current workspace if compose file does not exists
