@@ -12,7 +12,7 @@ public:
         const ComposeExecutorPtr& composeExecutor);
 
     void list(bool namesOnly);
-    void add(const std::string& name, const std::string& composeFile);
+    void add(const std::string& name, const std::string& composeFile, bool createProjectFile);
     void remove(const std::string& name);
     void stop();
     void down(bool purge);
@@ -21,6 +21,7 @@ public:
 private:
     Workspace getWorkspace(const std::string& name) const;
     std::optional<Workspace> findWorkspaceByPath(const std::string& path) const;
+    std::optional<Workspace> loadWorkspaceFromConfig();
 
     WorkspacesRepositoryPtr wpRepo;
     StateRepositoryPtr stateRepo;

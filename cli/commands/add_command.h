@@ -15,4 +15,5 @@ private:
     WorkspaceServicePtr service;
     std::string name;
     std::string file;
+    bool createProjectFile;
 };

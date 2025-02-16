@@ -5,10 +5,7 @@
 #include <string>
 #include <vector>
 
-struct Workspace {
-    std::string name;
-    std::string composeFile;
-};
+#include "workspace.h"
 
 class WorkspacesRepository {
 public:
