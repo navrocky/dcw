@@ -31,12 +31,33 @@ Subcommands:
   down, d                     Down current workspace
 ```
 
+## Project file
+
+`dcw` can use the `.dcw` project file in the source root to get information about a new project. 
+
+Just run `dcw up` in the root of the project with the `.dcw` file and let `dcw` take care of the rest.
+
+Sample `.dcw` project file:
+
+```
+name: myproj
+composeFile: env/docker-compose.yml
+```
+
+A project file can be automatically created with the `add` command with the `-p, --create-project` flag.
+
 ## Examples
 
 ### Add workspace:
 
 ```sh
 dcw add myproj /home/user/myproj/docker-compose.yml
+```
+
+### Add workspace and create dcw project file:
+
+```sh
+dcw add -p myproj docker-compose.yml
 ```
 
 ### List workspaces and view active:

@@ -27,6 +27,9 @@ set(SOURCES
     process_executor.cpp
     compose_executor.h
     compose_executor.cpp
+    workspace.h
+    dcw_config.h
+    dcw_config.cpp
 
     yaml_workspaces_repository.h
     yaml_workspaces_repository.cpp

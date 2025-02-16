@@ -22,6 +22,7 @@ function _complete()
         case "${WORD}" in
           add)
             STATE="add_name"
+            WORDS="--create-project"
           ;;
           up)
             STATE="up"

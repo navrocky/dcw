@@ -5,6 +5,8 @@
 #include <iostream>
 #include <termcolor/termcolor.hpp>
 
+#include "dcw_config.h"
+
 using namespace std;
 namespace tc = termcolor;
 
@@ -33,10 +35,18 @@ void WorkspaceService::list(bool namesOnly)
     }
 }
 
-void WorkspaceService::add(const string& name, const string& composeFile)
+void WorkspaceService::add(const string& name, const string& composeFile, bool createProjectFile)
 {
-    wpRepo->add({ .name = name, .composeFile = composeFile });
+    Workspace wp = { .name = name, .composeFile = composeFile };
+    wpRepo->add(wp);
     cout << "✅ " << "Workspace \"" << tc::bold << name << tc::reset << "\" added" << endl;
+    if (createProjectFile) {
+        auto currentDir = filesystem::current_path().string();
+        wp.composeFile
+            = wp.composeFile.substr(currentDir.length() + 1, wp.composeFile.length() - currentDir.length() - 1);
+        DcwConfig::save(DCW_CONFIG_NAME, { .workspace = wp });
+        cout << "✅ " << "Project file \"" << tc::bold << DCW_CONFIG_NAME << tc::reset << "\" created" << endl;
+    }
 }
 
 void WorkspaceService::remove(const std::string& name)
@@ -78,8 +88,15 @@ void WorkspaceService::up(const std::string& name, bool clean)
     }
 
     if (!wp.has_value()) {
-        auto curPath = filesystem::current_path();
-        wp = findWorkspaceByPath(curPath);
+        wp = loadWorkspaceFromConfig();
+        if (wp) {
+            auto existingWp = wpRepo->findByName(wp->name);
+            if (!existingWp)
+                add(wp->name, filesystem::absolute(wp->composeFile), false);
+        } else {
+            auto curPath = filesystem::current_path();
+            wp = findWorkspaceByPath(curPath);
+        }
     }
 
     if (!wp.has_value() && currentWpName.has_value()) {
@@ -122,4 +139,21 @@ std::optional<Workspace> WorkspaceService::findWorkspaceByPath(const std::string
             workspaces.push_back(wp);
     }
     return workspaces.size() == 1 ? optional(workspaces[0]) : nullopt;
+}
+
+std::optional<Workspace> WorkspaceService::loadWorkspaceFromConfig()
+{
+    auto curPath = filesystem::current_path();
+    auto configFile = DcwConfig::search(DCW_CONFIG_NAME, curPath);
+    if (!configFile)
+        return nullopt;
+
+    auto config = DcwConfig::load(*configFile);
+    if (filesystem::path(config.workspace.composeFile).is_relative()) {
+        auto configFilePath = filesystem::path(*configFile);
+        auto projectRootPath = configFilePath.has_parent_path() ? configFilePath.parent_path() : "/";
+        config.workspace.composeFile = projectRootPath / config.workspace.composeFile;
+    }
+
+    return config.workspace;
 }

@@ -16,10 +16,11 @@ void AddCommand::reg(CLI::App& app)
                    ->callback(std::bind(&AddCommand::process, this));
     cmd->add_option("name", name, "Workspace name")->required();
     cmd->add_option("file", file, "Docker compose file")->required();
+    cmd->add_flag("-p, --create-project", createProjectFile, "Create project file in current directory");
 }
 
 void AddCommand::process()
 {
     auto composeFilePath = std::filesystem::absolute(file);
-    service->add(name, composeFilePath);
+    service->add(name, composeFilePath, createProjectFile);
 }
