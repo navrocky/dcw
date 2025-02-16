@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const std::string DCW_CONFIG_NAME = ".dcw";
+const std::string DCW_CONFIG_NAME = ".dcw.yml";
 
 namespace {
 
@@ -37,6 +37,9 @@ void DcwConfig::save(const std::string& file, const DcwConfig& config)
         yaml["composeFile"] = config.workspace.composeFile;
         std::ofstream fout(file);
         fout.exceptions(ios::badbit | ios::failbit);
+        fout << "# This is a configuration file of Docker Compose Workspace (dcw) tool" << endl;
+        fout << "# Read more at https://github.com/navrocky/dcw" << endl;
+        fout << "" << endl;
         fout << yaml;
     } catch (const exception& e) {
         throw runtime_error(format("Cannot write config file \"{}\": {}", file, e.what()));
