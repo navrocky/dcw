@@ -55,7 +55,12 @@ std::optional<string> DcwConfig::search(const std::string& fileName, const std::
             return file.string();
         if (!dir.has_parent_path())
             return nullopt;
+
+        auto oldDir = dir;
         dir = dir.parent_path();
+        // stupid std lib realisation, has_parent_path always returns true
+        if (oldDir == dir)
+            return nullopt;
     }
 }
 
