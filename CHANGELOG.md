@@ -1,3 +1,7 @@
+# 1.3.1 (2025-05-10)
+
+- Fixed hang on project file detection
+
 # 1.3.0 (2025-02-16)
 
 - Add support for project file `.dcw`
