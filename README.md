@@ -4,7 +4,8 @@ It helps to manage developer test environments based on docker-compose files.
 
 ## Installation
 
-The released binaries are statically compiled, so they can run in almost all linux distributions. App running is tested in Ubuntu 4 (2006). 
+The released binaries are statically compiled, so they can run in almost all linux distributions. 
+App running is tested in Ubuntu 4 (2006). 
 Supported platforms is:
 
 * Linux x86, x86_64
@@ -29,6 +30,7 @@ Subcommands:
   list, l                     List registered workspaces
   up, u                       Switch to the workspace
   down, d                     Down current workspace
+  purge, p                    Purge data of current workspace 
 ```
 
 ## Project file
