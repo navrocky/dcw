@@ -11,7 +11,7 @@ function _complete()
         case "${WORD}" in
           dcw)
             STATE="dcw"
-            WORDS="add down list rm up --help"
+            WORDS="add down list rm up purge --help"
           ;;
           *)
             STATE="fail"
@@ -39,6 +39,9 @@ function _complete()
           down)
             STATE="down"
             WORDS="--purge"
+          ;;
+          purge)
+            STATE="purge"
           ;;
           --help)
             STATE="help"
