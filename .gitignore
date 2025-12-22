@@ -1,3 +1,5 @@
 /dist
 /CMakeLists.txt.user
 /CMakeUserPresets.json
+/build
+/.qtcreator

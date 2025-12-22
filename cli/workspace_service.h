@@ -17,6 +17,7 @@ public:
     void stop();
     void down(bool purge);
     void up(const std::string& name, bool clean);
+    void purgeCurrent();
 
 private:
     Workspace getWorkspace(const std::string& name) const;

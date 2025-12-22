@@ -123,6 +123,15 @@ void WorkspaceService::up(const std::string& name, bool clean)
     cout << "✅ " << "Workspace \"" << tc::bold << wp->name << tc::reset << "\" activated" << endl;
 }
 
+void WorkspaceService::purgeCurrent()
+{
+    auto wpName = stateRepo->getCurrentWorkspace();
+    if (!wpName)
+        throw runtime_error("No current workspace");
+    down(true);
+    up(*wpName, false);
+}
+
 Workspace WorkspaceService::getWorkspace(const std::string& name) const
 {
     auto wp = wpRepo->findByName(name);

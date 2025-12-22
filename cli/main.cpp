@@ -10,6 +10,7 @@
 #include "commands/add_command.h"
 #include "commands/down_command.h"
 #include "commands/list_command.h"
+#include "commands/purge_command.h"
 #include "commands/remove_command.h"
 #include "commands/up_command.h"
 #include "config.h"
@@ -45,6 +46,7 @@ int main(int argc, char** argv)
             make_shared<ListCommand>(workspaceService),
             make_shared<UpCommand>(workspaceService),
             make_shared<DownCommand>(workspaceService),
+            make_shared<PurgeCommand>(workspaceService),
         };
 
         CLI::App app { format("Docker Compose Workspace manager (v{})", APP_VERSION) };
