@@ -1,3 +1,7 @@
+# 1.4.0 (2025-12-22)
+
+- Add purge command
+
 # 1.3.1 (2025-05-10)
 
 - Fixed hang on project file detection
